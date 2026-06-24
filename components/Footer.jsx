@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { nav, site } from "@/lib/site";
 import { categories } from "@/lib/products";
@@ -66,7 +67,14 @@ export default function Footer() {
       <div className="container-luxe grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
         {/* Brand */}
         <div>
-          <span className="font-roman text-2xl tracking-[0.2em] text-canvas">FLOORA</span>
+          <Image
+            src="/assets/logo/Floora_logo_light.png"
+            alt={`${site.name} logo`}
+            width={1403}
+            height={311}
+            quality={100}
+            className="h-12 w-auto"
+          />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-canvas/60">{site.description}</p>
           <div className="mt-6 flex items-center gap-3">
             {site.social.map((s) => {

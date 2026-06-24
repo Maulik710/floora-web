@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { nav, site } from "@/lib/site";
@@ -64,11 +65,16 @@ export default function Header() {
       >
         <div className="container-luxe flex h-16 items-center justify-between gap-4 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="group flex items-center gap-2.5" aria-label={`${site.name} home`}>
-            <span className="grid h-9 w-9 place-items-center rounded-full border border-charcoal/20 font-roman text-sm text-charcoal transition-colors group-hover:border-clay group-hover:text-clay">
-              F
-            </span>
-            <span className="font-roman text-xl tracking-[0.2em] text-charcoal">FLOORA</span>
+          <Link href="/" className="group flex items-center" aria-label={`${site.name} home`}>
+            <Image
+              src="/assets/logo/Floora_logo_dark.png"
+              alt={`${site.name} logo`}
+              width={1403}
+              height={311}
+              quality={100}
+              priority
+              className="h-9 w-auto lg:h-10"
+            />
           </Link>
 
           {/* Desktop nav */}
@@ -164,7 +170,14 @@ export default function Header() {
           />
           <div className="absolute right-0 top-0 flex h-full w-[86%] max-w-sm flex-col bg-canvas shadow-soft-lg animate-slide-in">
             <div className="flex h-16 items-center justify-between border-b border-charcoal/10 px-5">
-              <span className="font-roman text-lg tracking-[0.2em] text-charcoal">FLOORA</span>
+              <Image
+                src="/assets/logo/Floora_logo_dark.png"
+                alt={`${site.name} logo`}
+                width={1403}
+                height={311}
+                quality={100}
+                className="h-8 w-auto"
+              />
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
