@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { useInquiry } from "@/components/InquiryContext";
-import { categoryName, colorsList } from "@/lib/products";
+import { categoryName, getColorVariants } from "@/lib/products";
 import { site } from "@/lib/site";
 import {
   Plus, Check, Download, ArrowRight, Droplet, Ruler, Layers, Shield, Close, Star,
@@ -20,13 +21,9 @@ export default function ProductDetailClient({ product }) {
   const added = isInInquiry(product.slug);
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState(false);
-  const [variant, setVariant] = useState(product.color);
 
-  // A small set of plausible colour variants, anchored on the product's own colour
-  const variants = [
-    colorsList.find((c) => c.name === product.color) || { name: product.color, hex: product.colorHex },
-    ...colorsList.filter((c) => c.name !== product.color).slice(0, 4),
-  ];
+  // Real colour variants — other products in the catalogue with the same look, in a different colour
+  const variants = getColorVariants(product, 6);
 
   const downloadSpecSheet = () => {
     const lines = [
@@ -130,21 +127,45 @@ export default function ProductDetailClient({ product }) {
 
           {/* Variants */}
           <div className="mt-7">
-            <p className="field-label">Colour / Variant — <span className="text-charcoal">{variant}</span></p>
-            <div className="mt-2 flex flex-wrap gap-3">
-              {variants.map((c) => (
-                <button
-                  key={c.name}
-                  type="button"
-                  onClick={() => setVariant(c.name)}
-                  aria-label={c.name}
-                  title={c.name}
-                  className={`h-10 w-10 rounded-full border transition-all cursor-pointer ${
-                    variant === c.name ? "ring-2 ring-clay ring-offset-2 ring-offset-canvas border-transparent" : "border-charcoal/15 hover:scale-105"
-                  }`}
-                  style={{ backgroundColor: c.hex }}
-                />
-              ))}
+            <p className="field-label">Colour / Variant — <span className="text-charcoal">{product.color}</span></p>
+            <div className="mt-3 grid grid-cols-3 gap-4 sm:grid-cols-4">
+              {variants.map((v) => {
+                const isCurrent = v.slug === product.slug;
+                const thumb = (
+                  <>
+                    <div
+                      className={`relative aspect-square overflow-hidden rounded-xl bg-cream transition-all ${
+                        isCurrent
+                          ? "ring-2 ring-clay ring-offset-2 ring-offset-canvas"
+                          : "opacity-90 group-hover:opacity-100 group-hover:scale-[1.03]"
+                      }`}
+                    >
+                      <Image src={v.images[0]} alt={v.color} fill sizes="120px" className="object-cover" />
+                      {isCurrent && (
+                        <span className="absolute bottom-1 right-1 grid h-5 w-5 place-items-center rounded-full bg-clay text-white">
+                          <Check className="h-3 w-3" />
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1.5 truncate text-xs font-medium text-charcoal">{v.color}</p>
+                    <p className="truncate text-[0.7rem] text-stone">{v.style} · {v.finish}</p>
+                  </>
+                );
+                return isCurrent ? (
+                  <div key={v.slug} className="group">
+                    {thumb}
+                  </div>
+                ) : (
+                  <Link
+                    key={v.slug}
+                    href={`/products/${v.slug}`}
+                    title={`${v.name} — ${v.color}`}
+                    className="group cursor-pointer"
+                  >
+                    {thumb}
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
