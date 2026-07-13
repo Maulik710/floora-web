@@ -62,7 +62,7 @@ export default function HomePage() {
           <div className="max-w-2xl animate-fade-up">
             <p className="eyebrow text-clay">Premium Surfaces · Est. 2009</p>
             <h1 className="mt-5 font-display text-5xl leading-[1.05] text-canvas text-balance sm:text-6xl lg:text-7xl">
-              Surfaces for a<br className="hidden sm:block" /> considered life
+            Every step,<br className="hidden sm:block" /> perfectly placed.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-canvas/80 text-pretty">
               SPC, WPC, laminate, luxury vinyl and porcelain tile — crafted in matte, gloss, textured, wood-grain and
