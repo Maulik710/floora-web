@@ -3,42 +3,38 @@ import { notFound } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/ProductCard";
 import ProductDetailClient from "@/components/ProductDetailClient";
-import { products as staticProducts, getProduct as getStaticProduct, categoryName } from "@/lib/products";
-import { getProducts, getProductBySlug, getRelatedFrom, getColorVariantsFrom } from "@/lib/cms";
+import {
+  getProducts,
+  getProductBySlug,
+  getRelatedFrom,
+  getColorVariantsFrom,
+  getSiteSettings,
+} from "@/lib/cms";
 import { ChevronRight } from "@/components/Icons";
 
-async function resolveCatalog() {
-  const cmsProducts = await getProducts();
-  return cmsProducts?.length ? cmsProducts : staticProducts;
-}
-
-async function resolveProduct(slug, catalog) {
-  const cmsProduct = await getProductBySlug(slug);
-  if (cmsProduct) return cmsProduct;
-  return catalog.find((p) => p.slug === slug) || getStaticProduct(slug) || null;
-}
-
 export async function generateStaticParams() {
-  const catalog = await resolveCatalog();
-  return catalog.map((p) => ({ slug: p.slug }));
+  const products = await getProducts();
+  return (products ?? []).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }) {
-  const catalog = await resolveCatalog();
-  const product = await resolveProduct(params.slug, catalog);
+  const product = await getProductBySlug(params.slug);
   if (!product) return { title: "Product not found" };
   return {
     title: product.name,
-    description: `${product.name} — ${categoryName(product.category)} in ${product.material} ${product.style.toLowerCase()}, ${product.size}. View specs, variants and request a quote.`,
+    description: `${product.name} — ${product.categoryName} in ${product.material} ${product.style.toLowerCase()}, ${product.size}. View specs, variants and request a quote.`,
   };
 }
 
 export default async function ProductDetailPage({ params }) {
-  const catalog = await resolveCatalog();
-  const product = await resolveProduct(params.slug, catalog);
+  const [product, catalog, site] = await Promise.all([
+    getProductBySlug(params.slug),
+    getProducts(),
+    getSiteSettings(),
+  ]);
   if (!product) notFound();
-  const related = getRelatedFrom(catalog, product, 4);
-  const variants = getColorVariantsFrom(catalog, product, 6);
+  const related = getRelatedFrom(catalog ?? [], product, 4);
+  const variants = getColorVariantsFrom(catalog ?? [], product, 6);
 
   return (
     <div className="container-luxe py-10 lg:py-14">
@@ -49,14 +45,14 @@ export default async function ProductDetailPage({ params }) {
         <Link href="/products" className="hover:text-charcoal">Products</Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <Link href={`/products?category=${product.category}`} className="hover:text-charcoal">
-          {categoryName(product.category)}
+          {product.categoryName}
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="text-charcoal">{product.name}</span>
       </nav>
 
       <div className="mt-8">
-        <ProductDetailClient product={product} variants={variants} />
+        <ProductDetailClient product={product} variants={variants} site={site} />
       </div>
 
       {/* Related */}

@@ -9,5 +9,5 @@ export const metadata = {
 
 export default async function GalleryPage() {
   const items = await getGalleryItems();
-  return <GalleryClient items={items} />;
+  return <GalleryClient items={items ?? []} />;
 }

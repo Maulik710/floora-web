@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import ModalButton from "@/components/ModalButton";
 import { getAboutPage } from "@/lib/cms";
@@ -22,53 +23,9 @@ const manufacturingLayout = [
   "sm:col-span-2 aspect-[16/10]",
 ];
 
-const fallbackAbout = {
-  heroEyebrow: "Our Story",
-  heroHeading: "Fifteen years of surfaces with soul",
-  heroDescription:
-    "Floora began with a simple belief — that the surfaces underfoot shape how a space feels. Today we craft premium flooring and tile for the people who care most about getting it right.",
-  heroImage: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1200&q=80",
-  missionQuote:
-    "To make world-class surfaces accessible — pairing the warmth of natural materials with the resilience of modern engineering, so every space can feel considered, calm and built to last.",
-  manufacturingImages: [
-    {
-      image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=1200&q=80",
-      label: "Precision manufacturing",
-    },
-    {
-      image: "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&w=1200&q=80",
-      label: "Quality control",
-    },
-    {
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1200&q=80",
-      label: "Showroom displays",
-    },
-    {
-      image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80",
-      label: "Curated finishes",
-    },
-  ],
-  values: [
-    { icon: "Shield", title: "Integrity in materials", text: "We specify only what we would lay in our own homes — tested, certified, honest." },
-    { icon: "Palette", title: "Design-led thinking", text: "Curated palettes and finishes developed with architects and interior designers." },
-    { icon: "Headset", title: "Service that stays", text: "From first sample to final installation, a dedicated advisor walks beside you." },
-  ],
-  milestones: [
-    { year: "2009", title: "Founded in Morbi", text: "Began as a small porcelain trader with a single kiln partner." },
-    { year: "2014", title: "First SPC line", text: "Introduced rigid-core waterproof flooring to the Indian market." },
-    { year: "2019", title: "Experience Centre", text: "Opened our 12,000 sq.ft showroom for architects and homeowners." },
-    { year: "2024", title: "500+ finishes", text: "Five collections spanning wood, stone, marble and concrete looks." },
-  ],
-  stats: [
-    { value: "15+", label: "Years of craft" },
-    { value: "10,000+", label: "Projects delivered" },
-    { value: "98%", label: "Client satisfaction" },
-  ],
-};
-
 export default async function AboutPage() {
-  const cmsAbout = await getAboutPage();
-  const about = cmsAbout || fallbackAbout;
+  const about = await getAboutPage();
+  if (!about) notFound();
 
   return (
     <>

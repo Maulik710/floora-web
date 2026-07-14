@@ -3,12 +3,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
-import {
-  products as staticProducts,
-  categories as staticCategories,
-  colorsList as staticColorsList,
-  rooms as staticRooms,
-} from "@/lib/products";
 import { Close, ChevronDown, Search } from "@/components/Icons";
 
 const emptyFilters = { category: [], material: [], style: [], color: [], size: [], room: [] };
@@ -70,15 +64,11 @@ function FacetGroup({ title, options, selected, onToggle, renderSwatch }) {
 }
 
 export default function CatalogClient({
-  products: productsProp,
-  categories: categoriesProp,
-  colorsList: colorsListProp,
-  rooms: roomsProp,
+  products = [],
+  categories = [],
+  colorsList = [],
+  rooms = [],
 } = {}) {
-  const products = productsProp?.length ? productsProp : staticProducts;
-  const categories = categoriesProp?.length ? categoriesProp : staticCategories;
-  const colorsList = colorsListProp?.length ? colorsListProp : staticColorsList;
-  const rooms = roomsProp?.length ? roomsProp : staticRooms;
   // Material/style/size facets are derived from whatever the current catalogue
   // actually contains, so a CMS-driven product list stays in sync with no
   // separate taxonomy list to maintain.

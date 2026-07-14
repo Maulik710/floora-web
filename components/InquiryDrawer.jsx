@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useInquiry } from "@/components/InquiryContext";
-import { categoryName } from "@/lib/products";
 import { Close, Bag, ArrowRight, Check } from "@/components/Icons";
 
 export default function InquiryDrawer() {
@@ -72,7 +71,7 @@ export default function InquiryDrawer() {
                         {item.name}
                       </Link>
                       <p className="mt-0.5 text-xs text-stone">
-                        {categoryName(item.category)} · {item.material} · {item.size}
+                        {item.categoryName} · {item.material} · {item.size}
                       </p>
                       <button
                         type="button"

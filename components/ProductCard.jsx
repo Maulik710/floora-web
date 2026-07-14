@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useInquiry } from "@/components/InquiryContext";
-import { categoryName } from "@/lib/products";
 import { Plus, Check, ArrowRight } from "@/components/Icons";
 
 export default function ProductCard({ product, priority = false }) {
@@ -16,7 +15,7 @@ export default function ProductCard({ product, priority = false }) {
         <Link href={`/products/${product.slug}`} aria-label={`View ${product.name}`}>
           <Image
             src={product.images[0]}
-            alt={`${product.name} — ${product.style.toLowerCase()} ${categoryName(product.category)} in ${product.material}`}
+            alt={`${product.name} — ${product.style.toLowerCase()} ${product.categoryName} in ${product.material}`}
             fill
             priority={priority}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -53,7 +52,7 @@ export default function ProductCard({ product, priority = false }) {
               {product.name}
             </h3>
           </Link>
-          <span className="shrink-0 text-xs uppercase tracking-wide text-taupe">{categoryName(product.category)}</span>
+          <span className="shrink-0 text-xs uppercase tracking-wide text-taupe">{product.categoryName}</span>
         </div>
         <p className="mt-1 text-sm text-stone">
           {product.material} · {product.size}

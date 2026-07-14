@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { site as staticSite, whatsappLink } from "@/lib/site";
+import { whatsappLink } from "@/lib/site";
 import { useInquiry } from "@/components/InquiryContext";
 import { WhatsApp, Phone, Headset, Close, Plus } from "@/components/Icons";
 
-export default function FloatingContact({ site: siteProp }) {
-  const site = siteProp || staticSite;
+export default function FloatingContact({ site }) {
   const [open, setOpen] = useState(false);
   const { openModal } = useInquiry();
 

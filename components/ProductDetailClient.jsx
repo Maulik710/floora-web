@@ -4,8 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useInquiry } from "@/components/InquiryContext";
-import { categoryName, getColorVariants as getColorVariantsStatic } from "@/lib/products";
-import { site } from "@/lib/site";
 import {
   Plus, Check, Download, ArrowRight, Droplet, Ruler, Layers, Shield, Close, Star,
 } from "@/components/Icons";
@@ -16,19 +14,16 @@ const specIcon = {
   "Wear Layer": Shield,
 };
 
-export default function ProductDetailClient({ product, variants: variantsProp }) {
+export default function ProductDetailClient({ product, variants = [], site }) {
   const { addItem, isInInquiry, openModal, setDrawerOpen } = useInquiry();
   const added = isInInquiry(product.slug);
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState(false);
 
-  // Real colour variants — other products in the catalogue with the same look, in a different colour
-  const variants = variantsProp?.length ? variantsProp : getColorVariantsStatic(product, 6);
-
   const downloadSpecSheet = () => {
     const lines = [
       `FLOORA — ${product.name}`,
-      `${categoryName(product.category)} · ${product.style} · ${product.material}`,
+      `${product.categoryName} · ${product.style} · ${product.material}`,
       "".padEnd(48, "-"),
       ...Object.entries(product.specs).map(([k, v]) => `${(k + ":").padEnd(20)} ${v}`),
       "".padEnd(48, "-"),
@@ -93,7 +88,7 @@ export default function ProductDetailClient({ product, variants: variantsProp })
 
         {/* ---------- Info ---------- */}
         <div>
-          <p className="eyebrow">{categoryName(product.category)} Collection</p>
+          <p className="eyebrow">{product.categoryName} Collection</p>
           <h1 className="mt-2 font-display text-4xl text-charcoal sm:text-5xl">{product.name}</h1>
 
           <div className="mt-3 flex items-center gap-3 text-sm text-stone">
@@ -106,7 +101,7 @@ export default function ProductDetailClient({ product, variants: variantsProp })
           </div>
 
           <p className="mt-5 max-w-md text-base leading-relaxed text-stone">
-            A {product.style.toLowerCase()}-look {categoryName(product.category).toLowerCase()} crafted in{" "}
+            A {product.style.toLowerCase()}-look {product.categoryName.toLowerCase()} crafted in{" "}
             {product.material} — engineered for lasting beauty across{" "}
             {product.rooms.slice(0, 2).join(" and ").toLowerCase()} and beyond.
           </p>

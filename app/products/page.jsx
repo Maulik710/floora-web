@@ -16,13 +16,18 @@ export default async function ProductsPage() {
   ]);
   // Colour swatches are a property of the products themselves (each carries
   // its own colorHex), not a separate CMS collection — derive the unique list.
-  const colorsList = products?.length
-    ? Array.from(new Map(products.map((p) => [p.color, { name: p.color, hex: p.colorHex }])).values())
-    : null;
+  const colorsList = Array.from(
+    new Map((products ?? []).map((p) => [p.color, { name: p.color, hex: p.colorHex }])).values()
+  );
 
   return (
     <Suspense fallback={<div className="container-luxe py-24 text-stone">Loading catalog…</div>}>
-      <CatalogClient products={products} categories={categories} colorsList={colorsList} rooms={rooms} />
+      <CatalogClient
+        products={products ?? []}
+        categories={categories ?? []}
+        colorsList={colorsList}
+        rooms={rooms ?? []}
+      />
     </Suspense>
   );
 }

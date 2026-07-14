@@ -1,7 +1,5 @@
 import "./globals.css";
 import { Cormorant_Garamond, Cinzel, Inter } from "next/font/google";
-import { site as staticSite } from "@/lib/site";
-import { categories as staticCategories } from "@/lib/products";
 import { getSiteSettings, getCategories } from "@/lib/cms";
 import { InquiryProvider } from "@/components/InquiryContext";
 import Header from "@/components/Header";
@@ -30,7 +28,7 @@ const inter = Inter({
 });
 
 export async function generateMetadata() {
-  const site = (await getSiteSettings()) || staticSite;
+  const site = await getSiteSettings();
   return {
     metadataBase: new URL("https://floora.example"),
     title: {
@@ -53,9 +51,7 @@ export const viewport = {
 };
 
 export default async function RootLayout({ children }) {
-  const [cmsSite, cmsCategories] = await Promise.all([getSiteSettings(), getCategories()]);
-  const site = cmsSite || staticSite;
-  const categories = cmsCategories?.length ? cmsCategories : staticCategories;
+  const [site, categories] = await Promise.all([getSiteSettings(), getCategories()]);
 
   return (
     <html lang="en" className={`${cormorant.variable} ${cinzel.variable} ${inter.variable}`}>
@@ -69,7 +65,7 @@ export default async function RootLayout({ children }) {
           </a>
           <Header site={site} />
           <main id="main">{children}</main>
-          <Footer site={site} categories={categories} />
+          <Footer site={site} categories={categories ?? []} />
           <FloatingContact site={site} />
           <InquiryDrawer />
           <GlobalModals />

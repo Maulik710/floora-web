@@ -1,7 +1,8 @@
+import { notFound } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import ContactForm from "@/components/ContactForm";
 import ModalButton from "@/components/ModalButton";
-import { site as staticSite, whatsappLink } from "@/lib/site";
+import { whatsappLink } from "@/lib/site";
 import { getSiteSettings } from "@/lib/cms";
 import { Phone, Mail, MapPin, Clock, WhatsApp, Headset } from "@/components/Icons";
 
@@ -11,7 +12,8 @@ export const metadata = {
 };
 
 export default async function ContactPage() {
-  const site = (await getSiteSettings()) || staticSite;
+  const site = await getSiteSettings();
+  if (!site) notFound();
   return (
     <div className="container-luxe py-12 lg:py-16">
       {/* Heading */}

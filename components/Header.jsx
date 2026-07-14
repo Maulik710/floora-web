@@ -4,12 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { nav, site as staticSite } from "@/lib/site";
+import { nav } from "@/lib/site";
 import { useInquiry } from "@/components/InquiryContext";
 import { Search, Menu, Close, Bag, Phone, ArrowRight } from "@/components/Icons";
 
-export default function Header({ site: siteProp }) {
-  const site = siteProp || staticSite;
+export default function Header({ site }) {
   const pathname = usePathname();
   const router = useRouter();
   const { count, setDrawerOpen, openModal } = useInquiry();

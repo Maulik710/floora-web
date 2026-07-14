@@ -1,77 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/ProductCard";
 import ModalButton from "@/components/ModalButton";
-import { categories as staticCategories, products as staticProducts } from "@/lib/products";
 import { getCategories, getProducts, getTestimonials, getHomePage } from "@/lib/cms";
-import { site } from "@/lib/site";
 import { Shield, Droplet, Palette, Headset, ArrowRight, ArrowUpRight, Star, Quote, Check } from "@/components/Icons";
 
 const iconMap = { Shield, Droplet, Palette, Headset };
 
-const fallbackHome = {
-  heroEyebrow: "Premium Surfaces · Est. 2009",
-  heroHeading: "Every step,\nperfectly placed.",
-  heroSubheading:
-    "SPC, WPC, laminate, luxury vinyl and porcelain tile — crafted in matte, gloss, textured, wood-grain and stone-look finishes for spaces that endure.",
-  heroImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=80",
-  stats: [
-    { value: "15+ Years", label: "Surface craftsmanship" },
-    { value: "500+ Finishes", label: "Across five collections" },
-    { value: "10,000+ Projects", label: "Homes & commercial spaces" },
-  ],
-  whyChoose: [
-    { icon: "Shield", title: "Uncompromising Quality", text: "Every surface is engineered and inspected to architectural-grade standards." },
-    { icon: "Droplet", title: "Built to Endure", text: "Waterproof cores and high wear layers that hold their beauty for decades." },
-    { icon: "Palette", title: "Design Variety", text: "From honed marble to hand-scraped oak — finishes for every vision." },
-    { icon: "Headset", title: "Expert Support", text: "Specifiers, samples and on-site guidance from a dedicated advisor." },
-  ],
-  certifications: ["ISO 9001", "CE Certified", "FloorScore®", "GREENGUARD Gold", "25-Year Warranty"],
-  inspirationHeading: "See our surfaces in real spaces",
-  inspirationDescription:
-    "Browse a curated gallery of completed homes, bathrooms, kitchens and commercial interiors — organised by room — to picture the perfect finish for your project.",
-  inspirationImage: "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1400&q=80",
-  inspirationBullets: ["Living rooms & bedrooms", "Bathrooms & wet areas", "Kitchens & dining", "Hospitality & commercial"],
-  ctaEyebrow: "Start your project",
-  ctaHeading: "Let's find your perfect surface",
-  ctaDescription: "Request a tailored quote or order free samples shipped to your door. Our advisors are ready to help.",
-  ctaImage: "https://images.unsplash.com/photo-1615875605825-5eb9bb5d52ac?auto=format&fit=crop&w=1800&q=80",
-};
-
-const fallbackTestimonials = [
-  {
-    quote:
-      "Floora's porcelain transformed our boutique hotel lobby. The book-matched marble look is indistinguishable from natural stone — at a fraction of the maintenance.",
-    name: "Aanya Mehta",
-    role: "Principal Architect, Studio AM",
-  },
-  {
-    quote:
-      "The sampling service is the best in the industry. We specified Floora SPC across 40 apartments and the consistency was flawless.",
-    name: "Rohan Desai",
-    role: "Interior Designer, Form & Field",
-  },
-  {
-    quote:
-      "Premium feel, honest pricing and a team that actually answers the phone. Floora has become our default for residential flooring.",
-    name: "Priya Nair",
-    role: "Founder, Nair Build Co.",
-  },
-];
-
 export default async function HomePage() {
-  const [cmsCategories, cmsProducts, cmsTestimonials, cmsHome] = await Promise.all([
+  const [categories, products, testimonials, home] = await Promise.all([
     getCategories(),
     getProducts(),
     getTestimonials(),
     getHomePage(),
   ]);
-  const categories = cmsCategories?.length ? cmsCategories : staticCategories;
-  const products = cmsProducts?.length ? cmsProducts : staticProducts;
-  const testimonials = cmsTestimonials?.length ? cmsTestimonials : fallbackTestimonials;
-  const home = cmsHome || fallbackHome;
-  const featured = products.filter((p) => p.tag).slice(0, 4);
+  if (!home) notFound();
+  const featured = (products ?? []).filter((p) => p.tag).slice(0, 4);
   const [heroHeadingLine1, heroHeadingLine2] = home.heroHeading.split("\n");
 
   return (
@@ -140,7 +86,7 @@ export default async function HomePage() {
         </Reveal>
 
         <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-5">
-          {categories.map((cat, i) => (
+          {(categories ?? []).map((cat, i) => (
             <Reveal
               key={cat.slug}
               delay={i * 80}
@@ -275,7 +221,7 @@ export default async function HomePage() {
             </h2>
           </Reveal>
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
-            {testimonials.map((t, i) => (
+            {(testimonials ?? []).map((t, i) => (
               <Reveal key={t.name} delay={i * 90}>
                 <figure className="flex h-full flex-col rounded-2xl bg-canvas p-8 shadow-card">
                   <Quote className="h-8 w-8 text-clay/40" />

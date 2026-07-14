@@ -3,15 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { nav, site as staticSite } from "@/lib/site";
-import { categories as staticCategories } from "@/lib/products";
+import { nav } from "@/lib/site";
 import { Phone, Mail, MapPin, ArrowRight, Check, Instagram, Pinterest, LinkedIn, Houzz } from "@/components/Icons";
 
 const socialIcons = { Instagram, Pinterest, LinkedIn, Houzz };
 
-export default function Footer({ site: siteProp, categories: categoriesProp }) {
-  const site = siteProp || staticSite;
-  const categories = categoriesProp?.length ? categoriesProp : staticCategories;
+export default function Footer({ site, categories = [] }) {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
 
