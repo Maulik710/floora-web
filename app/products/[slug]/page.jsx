@@ -3,15 +3,29 @@ import { notFound } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/ProductCard";
 import ProductDetailClient from "@/components/ProductDetailClient";
-import { products, getProduct, getRelated, categoryName } from "@/lib/products";
+import { products as staticProducts, getProduct as getStaticProduct, categoryName } from "@/lib/products";
+import { getProducts, getProductBySlug, getRelatedFrom, getColorVariantsFrom } from "@/lib/cms";
 import { ChevronRight } from "@/components/Icons";
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
+async function resolveCatalog() {
+  const cmsProducts = await getProducts();
+  return cmsProducts?.length ? cmsProducts : staticProducts;
 }
 
-export function generateMetadata({ params }) {
-  const product = getProduct(params.slug);
+async function resolveProduct(slug, catalog) {
+  const cmsProduct = await getProductBySlug(slug);
+  if (cmsProduct) return cmsProduct;
+  return catalog.find((p) => p.slug === slug) || getStaticProduct(slug) || null;
+}
+
+export async function generateStaticParams() {
+  const catalog = await resolveCatalog();
+  return catalog.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({ params }) {
+  const catalog = await resolveCatalog();
+  const product = await resolveProduct(params.slug, catalog);
   if (!product) return { title: "Product not found" };
   return {
     title: product.name,
@@ -19,10 +33,12 @@ export function generateMetadata({ params }) {
   };
 }
 
-export default function ProductDetailPage({ params }) {
-  const product = getProduct(params.slug);
+export default async function ProductDetailPage({ params }) {
+  const catalog = await resolveCatalog();
+  const product = await resolveProduct(params.slug, catalog);
   if (!product) notFound();
-  const related = getRelated(product, 4);
+  const related = getRelatedFrom(catalog, product, 4);
+  const variants = getColorVariantsFrom(catalog, product, 6);
 
   return (
     <div className="container-luxe py-10 lg:py-14">
@@ -40,7 +56,7 @@ export default function ProductDetailPage({ params }) {
       </nav>
 
       <div className="mt-8">
-        <ProductDetailClient product={product} />
+        <ProductDetailClient product={product} variants={variants} />
       </div>
 
       {/* Related */}

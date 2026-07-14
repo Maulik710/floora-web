@@ -4,13 +4,10 @@ import { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import {
-  products,
-  categories,
-  finishes,
-  styles,
-  colorsList,
-  sizes,
-  rooms,
+  products as staticProducts,
+  categories as staticCategories,
+  colorsList as staticColorsList,
+  rooms as staticRooms,
 } from "@/lib/products";
 import { Close, ChevronDown, Search } from "@/components/Icons";
 
@@ -72,7 +69,23 @@ function FacetGroup({ title, options, selected, onToggle, renderSwatch }) {
   );
 }
 
-export default function CatalogClient() {
+export default function CatalogClient({
+  products: productsProp,
+  categories: categoriesProp,
+  colorsList: colorsListProp,
+  rooms: roomsProp,
+} = {}) {
+  const products = productsProp?.length ? productsProp : staticProducts;
+  const categories = categoriesProp?.length ? categoriesProp : staticCategories;
+  const colorsList = colorsListProp?.length ? colorsListProp : staticColorsList;
+  const rooms = roomsProp?.length ? roomsProp : staticRooms;
+  // Finish/style/size facets are derived from whatever the current catalogue
+  // actually contains, so a CMS-driven product list stays in sync with no
+  // separate taxonomy list to maintain.
+  const finishes = useMemo(() => [...new Set(products.map((p) => p.finish))].sort(), [products]);
+  const styles = useMemo(() => [...new Set(products.map((p) => p.style))].sort(), [products]);
+  const sizes = useMemo(() => [...new Set(products.map((p) => p.size))].sort(), [products]);
+
   const params = useSearchParams();
   const [filters, setFilters] = useState(emptyFilters);
   const [query, setQuery] = useState("");

@@ -1,7 +1,8 @@
 import Reveal from "@/components/Reveal";
 import ContactForm from "@/components/ContactForm";
 import ModalButton from "@/components/ModalButton";
-import { site, whatsappLink } from "@/lib/site";
+import { site as staticSite, whatsappLink } from "@/lib/site";
+import { getSiteSettings } from "@/lib/cms";
 import { Phone, Mail, MapPin, Clock, WhatsApp, Headset } from "@/components/Icons";
 
 export const metadata = {
@@ -9,7 +10,8 @@ export const metadata = {
   description: "Get in touch with Floora — call, email, WhatsApp or visit our experience centre in Morbi, Gujarat.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const site = (await getSiteSettings()) || staticSite;
   return (
     <div className="container-luxe py-12 lg:py-16">
       {/* Heading */}
@@ -34,7 +36,7 @@ export default function ContactPage() {
           <p className="mt-4 text-xs uppercase tracking-wide text-stone">Email</p>
           <p className="mt-1 break-all font-display text-xl text-charcoal">{site.email}</p>
         </a>
-        <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="group rounded-2xl border border-charcoal/10 bg-canvas p-6 transition-colors hover:border-clay/50 hover:bg-white">
+        <a href={whatsappLink(undefined, site.whatsapp)} target="_blank" rel="noopener noreferrer" className="group rounded-2xl border border-charcoal/10 bg-canvas p-6 transition-colors hover:border-clay/50 hover:bg-white">
           <WhatsApp className="h-6 w-6 text-[#25D366]" />
           <p className="mt-4 text-xs uppercase tracking-wide text-stone">WhatsApp</p>
           <p className="mt-1 font-display text-xl text-charcoal">Chat now</p>

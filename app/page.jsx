@@ -3,23 +3,43 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/ProductCard";
 import ModalButton from "@/components/ModalButton";
-import { categories, products } from "@/lib/products";
+import { categories as staticCategories, products as staticProducts } from "@/lib/products";
+import { getCategories, getProducts, getTestimonials, getHomePage } from "@/lib/cms";
 import { site } from "@/lib/site";
 import { Shield, Droplet, Palette, Headset, ArrowRight, ArrowUpRight, Star, Quote, Check } from "@/components/Icons";
 
-const heroImg =
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=80";
+const iconMap = { Shield, Droplet, Palette, Headset };
 
-const whyChoose = [
-  { icon: Shield, title: "Uncompromising Quality", text: "Every surface is engineered and inspected to architectural-grade standards." },
-  { icon: Droplet, title: "Built to Endure", text: "Waterproof cores and high wear layers that hold their beauty for decades." },
-  { icon: Palette, title: "Design Variety", text: "From honed marble to hand-scraped oak — finishes for every vision." },
-  { icon: Headset, title: "Expert Support", text: "Specifiers, samples and on-site guidance from a dedicated advisor." },
-];
+const fallbackHome = {
+  heroEyebrow: "Premium Surfaces · Est. 2009",
+  heroHeading: "Every step,\nperfectly placed.",
+  heroSubheading:
+    "SPC, WPC, laminate, luxury vinyl and porcelain tile — crafted in matte, gloss, textured, wood-grain and stone-look finishes for spaces that endure.",
+  heroImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=80",
+  stats: [
+    { value: "15+ Years", label: "Surface craftsmanship" },
+    { value: "500+ Finishes", label: "Across five collections" },
+    { value: "10,000+ Projects", label: "Homes & commercial spaces" },
+  ],
+  whyChoose: [
+    { icon: "Shield", title: "Uncompromising Quality", text: "Every surface is engineered and inspected to architectural-grade standards." },
+    { icon: "Droplet", title: "Built to Endure", text: "Waterproof cores and high wear layers that hold their beauty for decades." },
+    { icon: "Palette", title: "Design Variety", text: "From honed marble to hand-scraped oak — finishes for every vision." },
+    { icon: "Headset", title: "Expert Support", text: "Specifiers, samples and on-site guidance from a dedicated advisor." },
+  ],
+  certifications: ["ISO 9001", "CE Certified", "FloorScore®", "GREENGUARD Gold", "25-Year Warranty"],
+  inspirationHeading: "See our surfaces in real spaces",
+  inspirationDescription:
+    "Browse a curated gallery of completed homes, bathrooms, kitchens and commercial interiors — organised by room — to picture the perfect finish for your project.",
+  inspirationImage: "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1400&q=80",
+  inspirationBullets: ["Living rooms & bedrooms", "Bathrooms & wet areas", "Kitchens & dining", "Hospitality & commercial"],
+  ctaEyebrow: "Start your project",
+  ctaHeading: "Let's find your perfect surface",
+  ctaDescription: "Request a tailored quote or order free samples shipped to your door. Our advisors are ready to help.",
+  ctaImage: "https://images.unsplash.com/photo-1615875605825-5eb9bb5d52ac?auto=format&fit=crop&w=1800&q=80",
+};
 
-const certifications = ["ISO 9001", "CE Certified", "FloorScore®", "GREENGUARD Gold", "25-Year Warranty"];
-
-const testimonials = [
+const fallbackTestimonials = [
   {
     quote:
       "Floora's porcelain transformed our boutique hotel lobby. The book-matched marble look is indistinguishable from natural stone — at a fraction of the maintenance.",
@@ -40,15 +60,26 @@ const testimonials = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [cmsCategories, cmsProducts, cmsTestimonials, cmsHome] = await Promise.all([
+    getCategories(),
+    getProducts(),
+    getTestimonials(),
+    getHomePage(),
+  ]);
+  const categories = cmsCategories?.length ? cmsCategories : staticCategories;
+  const products = cmsProducts?.length ? cmsProducts : staticProducts;
+  const testimonials = cmsTestimonials?.length ? cmsTestimonials : fallbackTestimonials;
+  const home = cmsHome || fallbackHome;
   const featured = products.filter((p) => p.tag).slice(0, 4);
+  const [heroHeadingLine1, heroHeadingLine2] = home.heroHeading.split("\n");
 
   return (
     <>
       {/* ---------- HERO ---------- */}
       <section className="relative min-h-[88vh] w-full overflow-hidden">
         <Image
-          src={heroImg}
+          src={home.heroImage}
           alt="A serene, sunlit living room finished in warm Floora wood-look flooring"
           fill
           priority
@@ -60,14 +91,16 @@ export default function HomePage() {
 
         <div className="container-luxe relative flex min-h-[88vh] flex-col justify-center py-24">
           <div className="max-w-2xl animate-fade-up">
-            <p className="eyebrow text-clay">Premium Surfaces · Est. 2009</p>
+            <p className="eyebrow text-clay">{home.heroEyebrow}</p>
             <h1 className="mt-5 font-display text-5xl leading-[1.05] text-canvas text-balance sm:text-6xl lg:text-7xl">
-            Every step,<br className="hidden sm:block" /> perfectly placed.
+              {heroHeadingLine1}
+              {heroHeadingLine2 && (
+                <>
+                  <br className="hidden sm:block" /> {heroHeadingLine2}
+                </>
+              )}
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-canvas/80 text-pretty">
-              SPC, WPC, laminate, luxury vinyl and porcelain tile — crafted in matte, gloss, textured, wood-grain and
-              stone-look finishes for spaces that endure.
-            </p>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-canvas/80 text-pretty">{home.heroSubheading}</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link href="/products" className="btn-accent">
                 Explore Products <ArrowRight className="h-4 w-4" />
@@ -82,14 +115,10 @@ export default function HomePage() {
         {/* Floating stat ribbon */}
         <div className="absolute bottom-0 left-0 right-0 hidden border-t border-white/15 bg-charcoal/30 backdrop-blur-md md:block">
           <div className="container-luxe grid grid-cols-3 divide-x divide-white/15">
-            {[
-              ["15+ Years", "Surface craftsmanship"],
-              ["500+ Finishes", "Across five collections"],
-              ["10,000+ Projects", "Homes & commercial spaces"],
-            ].map(([big, small]) => (
-              <div key={big} className="px-2 py-6 text-center">
-                <p className="font-display text-2xl text-canvas">{big}</p>
-                <p className="mt-1 text-xs uppercase tracking-wide text-canvas/60">{small}</p>
+            {home.stats.map((s) => (
+              <div key={s.value} className="px-2 py-6 text-center">
+                <p className="font-display text-2xl text-canvas">{s.value}</p>
+                <p className="mt-1 text-xs uppercase tracking-wide text-canvas/60">{s.label}</p>
               </div>
             ))}
           </div>
@@ -154,8 +183,8 @@ export default function HomePage() {
             </h2>
           </Reveal>
           <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-charcoal/10 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-4">
-            {whyChoose.map((item, i) => {
-              const Icon = item.icon;
+            {home.whyChoose.map((item, i) => {
+              const Icon = iconMap[item.icon] || Shield;
               return (
                 <Reveal key={item.title} delay={i * 80} className="bg-canvas p-8 transition-colors duration-300 hover:bg-white">
                   <div className="grid h-12 w-12 place-items-center rounded-full bg-clay/10 text-clay">
@@ -197,7 +226,7 @@ export default function HomePage() {
             Certified, tested & trusted by leading studios
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-            {certifications.map((c) => (
+            {home.certifications.map((c) => (
               <span key={c} className="font-roman text-lg tracking-wide text-taupe transition-colors hover:text-charcoal">
                 {c}
               </span>
@@ -211,7 +240,7 @@ export default function HomePage() {
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <Reveal className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-soft">
             <Image
-              src="https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1400&q=80"
+              src={home.inspirationImage}
               alt="Designer bathroom finished in Floora porcelain tile"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -220,21 +249,14 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={120}>
             <p className="eyebrow">Inspiration</p>
-            <h2 className="mt-3 font-display text-4xl text-balance sm:text-5xl">
-              See our surfaces in real spaces
-            </h2>
-            <p className="mt-4 max-w-md text-base leading-relaxed text-stone">
-              Browse a curated gallery of completed homes, bathrooms, kitchens and commercial interiors — organised by
-              room — to picture the perfect finish for your project.
-            </p>
+            <h2 className="mt-3 font-display text-4xl text-balance sm:text-5xl">{home.inspirationHeading}</h2>
+            <p className="mt-4 max-w-md text-base leading-relaxed text-stone">{home.inspirationDescription}</p>
             <ul className="mt-6 space-y-3">
-              {["Living rooms & bedrooms", "Bathrooms & wet areas", "Kitchens & dining", "Hospitality & commercial"].map(
-                (li) => (
-                  <li key={li} className="flex items-center gap-3 text-sm text-ink">
-                    <Check className="h-4 w-4 text-clay" /> {li}
-                  </li>
-                )
-              )}
+              {home.inspirationBullets.map((li) => (
+                <li key={li} className="flex items-center gap-3 text-sm text-ink">
+                  <Check className="h-4 w-4 text-clay" /> {li}
+                </li>
+              ))}
             </ul>
             <Link href="/gallery" className="btn-outline mt-8">
               Explore the gallery <ArrowRight className="h-4 w-4" />
@@ -258,7 +280,7 @@ export default function HomePage() {
                 <figure className="flex h-full flex-col rounded-2xl bg-canvas p-8 shadow-card">
                   <Quote className="h-8 w-8 text-clay/40" />
                   <div className="mt-3 flex gap-0.5 text-clay">
-                    {Array.from({ length: 5 }).map((_, s) => (
+                    {Array.from({ length: t.rating || 5 }).map((_, s) => (
                       <Star key={s} className="h-4 w-4" />
                     ))}
                   </div>
@@ -280,20 +302,16 @@ export default function HomePage() {
       <section className="container-luxe py-24">
         <Reveal className="relative overflow-hidden rounded-3xl bg-charcoal px-6 py-20 text-center sm:px-12">
           <Image
-            src="https://images.unsplash.com/photo-1615875605825-5eb9bb5d52ac?auto=format&fit=crop&w=1800&q=80"
+            src={home.ctaImage}
             alt=""
             fill
             sizes="100vw"
             className="object-cover opacity-20"
           />
           <div className="relative mx-auto max-w-2xl">
-            <p className="eyebrow text-clay">Start your project</p>
-            <h2 className="mt-3 font-display text-4xl text-canvas text-balance sm:text-5xl">
-              Let's find your perfect surface
-            </h2>
-            <p className="mx-auto mt-4 max-w-lg text-base text-canvas/70">
-              Request a tailored quote or order free samples shipped to your door. Our advisors are ready to help.
-            </p>
+            <p className="eyebrow text-clay">{home.ctaEyebrow}</p>
+            <h2 className="mt-3 font-display text-4xl text-canvas text-balance sm:text-5xl">{home.ctaHeading}</h2>
+            <p className="mx-auto mt-4 max-w-lg text-base text-canvas/70">{home.ctaDescription}</p>
             <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
               <ModalButton type="quote" className="btn-accent">
                 Get a Quote <ArrowRight className="h-4 w-4" />

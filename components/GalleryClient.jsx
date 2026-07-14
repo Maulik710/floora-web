@@ -6,8 +6,8 @@ import { Close, ArrowUpRight } from "@/components/Icons";
 
 const tabs = ["All", "Living Room", "Bathroom", "Kitchen", "Commercial"];
 
-// Curated project shots tagged by room
-const gallery = [
+// Curated project shots tagged by room — used whenever no CMS gallery items are available
+const fallbackGallery = [
   { id: "1600585154340-be6161a56a0c", room: "Living Room", caption: "Nordic Oak SPC · Private Residence" },
   { id: "1600210492493-0946911123ea", room: "Bathroom", caption: "Carrara Statuario · Spa Bath" },
   { id: "1600566753086-00f18fb6b3ea", room: "Living Room", caption: "Urban Cement Porcelain · Loft" },
@@ -22,7 +22,8 @@ const gallery = [
   { id: "1616594039964-ae9021a400a0", room: "Bathroom", caption: "Linen Greige · Powder Room" },
 ];
 
-export default function GalleryClient() {
+export default function GalleryClient({ items: itemsProp }) {
+  const gallery = itemsProp?.length ? itemsProp : fallbackGallery;
   const [tab, setTab] = useState("All");
   const [lightbox, setLightbox] = useState(null);
 
@@ -67,7 +68,7 @@ export default function GalleryClient() {
             className="group relative block w-full overflow-hidden rounded-2xl bg-cream shadow-card cursor-pointer"
           >
             <Image
-              src={`https://images.unsplash.com/photo-${g.id}?auto=format&fit=crop&w=900&q=80`}
+              src={g.image || `https://images.unsplash.com/photo-${g.id}?auto=format&fit=crop&w=900&q=80`}
               alt={g.caption}
               width={900}
               height={i % 3 === 0 ? 1100 : i % 2 === 0 ? 700 : 900}
@@ -102,7 +103,7 @@ export default function GalleryClient() {
           <figure className="relative max-h-[88vh] w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
             <div className="relative h-[80vh] w-full">
               <Image
-                src={`https://images.unsplash.com/photo-${lightbox.id}?auto=format&fit=crop&w=1800&q=80`}
+                src={lightbox.image || `https://images.unsplash.com/photo-${lightbox.id}?auto=format&fit=crop&w=1800&q=80`}
                 alt={lightbox.caption}
                 fill
                 sizes="100vw"

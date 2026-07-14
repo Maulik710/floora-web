@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { site, whatsappLink } from "@/lib/site";
+import { site as staticSite, whatsappLink } from "@/lib/site";
 import { useInquiry } from "@/components/InquiryContext";
 import { WhatsApp, Phone, Headset, Close, Plus } from "@/components/Icons";
 
-export default function FloatingContact() {
+export default function FloatingContact({ site: siteProp }) {
+  const site = siteProp || staticSite;
   const [open, setOpen] = useState(false);
   const { openModal } = useInquiry();
 
@@ -15,7 +16,7 @@ export default function FloatingContact() {
       sub: "Typically replies in minutes",
       icon: WhatsApp,
       className: "bg-[#25D366] text-white",
-      href: whatsappLink(),
+      href: whatsappLink(undefined, site.whatsapp),
       external: true,
     },
     {

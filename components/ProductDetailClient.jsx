@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useInquiry } from "@/components/InquiryContext";
-import { categoryName, getColorVariants } from "@/lib/products";
+import { categoryName, getColorVariants as getColorVariantsStatic } from "@/lib/products";
 import { site } from "@/lib/site";
 import {
   Plus, Check, Download, ArrowRight, Droplet, Ruler, Layers, Shield, Close, Star,
@@ -16,14 +16,14 @@ const specIcon = {
   "Wear Layer": Shield,
 };
 
-export default function ProductDetailClient({ product }) {
+export default function ProductDetailClient({ product, variants: variantsProp }) {
   const { addItem, isInInquiry, openModal, setDrawerOpen } = useInquiry();
   const added = isInInquiry(product.slug);
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState(false);
 
   // Real colour variants — other products in the catalogue with the same look, in a different colour
-  const variants = getColorVariants(product, 6);
+  const variants = variantsProp?.length ? variantsProp : getColorVariantsStatic(product, 6);
 
   const downloadSpecSheet = () => {
     const lines = [
@@ -125,34 +125,33 @@ export default function ProductDetailClient({ product }) {
             ))}
           </dl>
 
-          {/* Variants */}
+          {/* Colour */}
           <div className="mt-7">
-            <p className="field-label">Colour / Variant — <span className="text-charcoal">{product.color}</span></p>
-            <div className="mt-3 grid grid-cols-3 gap-4 sm:grid-cols-4">
+            <p className="field-label">Colour — <span className="text-charcoal">{product.color}</span></p>
+            <div className="mt-3 grid grid-cols-5 gap-3 sm:grid-cols-6">
               {variants.map((v) => {
                 const isCurrent = v.slug === product.slug;
                 const thumb = (
                   <>
                     <div
-                      className={`relative aspect-square overflow-hidden rounded-xl bg-cream transition-all ${
+                      className={`relative aspect-square h-14 w-14 overflow-hidden rounded-full bg-cream transition-all ${
                         isCurrent
                           ? "ring-2 ring-clay ring-offset-2 ring-offset-canvas"
-                          : "opacity-90 group-hover:opacity-100 group-hover:scale-[1.03]"
+                          : "opacity-90 group-hover:opacity-100 group-hover:scale-105"
                       }`}
                     >
-                      <Image src={v.images[0]} alt={v.color} fill sizes="120px" className="object-cover" />
+                      <Image src={v.images[0]} alt={v.color} fill sizes="56px" className="object-cover" />
                       {isCurrent && (
-                        <span className="absolute bottom-1 right-1 grid h-5 w-5 place-items-center rounded-full bg-clay text-white">
-                          <Check className="h-3 w-3" />
+                        <span className="absolute bottom-0 right-0 grid h-4 w-4 place-items-center rounded-full bg-clay text-white">
+                          <Check className="h-2.5 w-2.5" />
                         </span>
                       )}
                     </div>
-                    <p className="mt-1.5 truncate text-xs font-medium text-charcoal">{v.color}</p>
-                    <p className="truncate text-[0.7rem] text-stone">{v.style} · {v.finish}</p>
+                    <p className="mt-1 max-w-[3.5rem] truncate text-center text-[0.65rem] text-stone">{v.color}</p>
                   </>
                 );
                 return isCurrent ? (
-                  <div key={v.slug} className="group">
+                  <div key={v.slug} className="group flex flex-col items-center">
                     {thumb}
                   </div>
                 ) : (
@@ -160,12 +159,33 @@ export default function ProductDetailClient({ product }) {
                     key={v.slug}
                     href={`/products/${v.slug}`}
                     title={`${v.name} — ${v.color}`}
-                    className="group cursor-pointer"
+                    className="group flex cursor-pointer flex-col items-center"
                   >
                     {thumb}
                   </Link>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Variant — texture preview, shown in black & white so the surface pattern reads without colour distraction */}
+          <div className="mt-6">
+            <p className="field-label">Variant — <span className="text-charcoal">{product.finish} texture</span></p>
+            <div className="mt-3 flex flex-wrap gap-2.5">
+              {product.images.map((img, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setActive(i)}
+                  aria-label={`View ${product.finish} texture ${i + 1}`}
+                  title={`${product.finish} texture`}
+                  className={`relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-cream grayscale transition-all cursor-pointer hover:grayscale-0 ${
+                    active === i ? "grayscale-0 ring-2 ring-clay ring-offset-2 ring-offset-canvas" : "opacity-80"
+                  }`}
+                >
+                  <Image src={img} alt={`${product.name} texture ${i + 1}`} fill sizes="48px" className="object-cover" />
+                </button>
+              ))}
             </div>
           </div>
 

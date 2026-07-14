@@ -1,6 +1,8 @@
 import "./globals.css";
 import { Cormorant_Garamond, Cinzel, Inter } from "next/font/google";
-import { site } from "@/lib/site";
+import { site as staticSite } from "@/lib/site";
+import { categories as staticCategories } from "@/lib/products";
+import { getSiteSettings, getCategories } from "@/lib/cms";
 import { InquiryProvider } from "@/components/InquiryContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -27,19 +29,22 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata = {
-  metadataBase: new URL("https://floora.example"),
-  title: {
-    default: `${site.name} — Premium SPC, Vinyl, Laminate & Porcelain Surfaces`,
-    template: `%s · ${site.name}`,
-  },
-  description: site.description,
-  openGraph: {
-    title: `${site.name} — Surfaces for a Considered Life`,
+export async function generateMetadata() {
+  const site = (await getSiteSettings()) || staticSite;
+  return {
+    metadataBase: new URL("https://floora.example"),
+    title: {
+      default: `${site.name} — Premium SPC, Vinyl, Laminate & Porcelain Surfaces`,
+      template: `%s · ${site.name}`,
+    },
     description: site.description,
-    type: "website",
-  },
-};
+    openGraph: {
+      title: `${site.name} — Surfaces for a Considered Life`,
+      description: site.description,
+      type: "website",
+    },
+  };
+}
 
 export const viewport = {
   width: "device-width",
@@ -47,7 +52,11 @@ export const viewport = {
   themeColor: "#FAF8F5",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const [cmsSite, cmsCategories] = await Promise.all([getSiteSettings(), getCategories()]);
+  const site = cmsSite || staticSite;
+  const categories = cmsCategories?.length ? cmsCategories : staticCategories;
+
   return (
     <html lang="en" className={`${cormorant.variable} ${cinzel.variable} ${inter.variable}`}>
       <body className="min-h-screen antialiased">
@@ -58,10 +67,10 @@ export default function RootLayout({ children }) {
           >
             Skip to content
           </a>
-          <Header />
+          <Header site={site} />
           <main id="main">{children}</main>
-          <Footer />
-          <FloatingContact />
+          <Footer site={site} categories={categories} />
+          <FloatingContact site={site} />
           <InquiryDrawer />
           <GlobalModals />
         </InquiryProvider>
