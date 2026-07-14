@@ -29,7 +29,7 @@ export async function generateMetadata({ params }) {
   if (!product) return { title: "Product not found" };
   return {
     title: product.name,
-    description: `${product.name} — ${categoryName(product.category)} in a ${product.finish.toLowerCase()} ${product.style.toLowerCase()} finish, ${product.size}. View specs, variants and request a quote.`,
+    description: `${product.name} — ${categoryName(product.category)} in ${product.material} ${product.style.toLowerCase()}, ${product.size}. View specs, variants and request a quote.`,
   };
 }
 

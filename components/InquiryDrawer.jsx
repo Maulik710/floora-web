@@ -72,7 +72,7 @@ export default function InquiryDrawer() {
                         {item.name}
                       </Link>
                       <p className="mt-0.5 text-xs text-stone">
-                        {categoryName(item.category)} · {item.finish} · {item.size}
+                        {categoryName(item.category)} · {item.material} · {item.size}
                       </p>
                       <button
                         type="button"

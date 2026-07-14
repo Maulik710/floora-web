@@ -16,7 +16,7 @@ export default function ProductCard({ product, priority = false }) {
         <Link href={`/products/${product.slug}`} aria-label={`View ${product.name}`}>
           <Image
             src={product.images[0]}
-            alt={`${product.name} — ${product.style.toLowerCase()} ${categoryName(product.category)} in ${product.finish.toLowerCase()} finish`}
+            alt={`${product.name} — ${product.style.toLowerCase()} ${categoryName(product.category)} in ${product.material}`}
             fill
             priority={priority}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -56,7 +56,7 @@ export default function ProductCard({ product, priority = false }) {
           <span className="shrink-0 text-xs uppercase tracking-wide text-taupe">{categoryName(product.category)}</span>
         </div>
         <p className="mt-1 text-sm text-stone">
-          {product.finish} · {product.size}
+          {product.material} · {product.size}
         </p>
         <Link
           href={`/products/${product.slug}`}

@@ -28,7 +28,7 @@ export default function ProductDetailClient({ product, variants: variantsProp })
   const downloadSpecSheet = () => {
     const lines = [
       `FLOORA — ${product.name}`,
-      `${categoryName(product.category)} · ${product.style} · ${product.finish}`,
+      `${categoryName(product.category)} · ${product.style} · ${product.material}`,
       "".padEnd(48, "-"),
       ...Object.entries(product.specs).map(([k, v]) => `${(k + ":").padEnd(20)} ${v}`),
       "".padEnd(48, "-"),
@@ -106,17 +106,18 @@ export default function ProductDetailClient({ product, variants: variantsProp })
           </div>
 
           <p className="mt-5 max-w-md text-base leading-relaxed text-stone">
-            A {product.style.toLowerCase()}-look {categoryName(product.category).toLowerCase()} in a refined{" "}
-            {product.finish.toLowerCase()} finish — engineered for lasting beauty across{" "}
+            A {product.style.toLowerCase()}-look {categoryName(product.category).toLowerCase()} crafted in{" "}
+            {product.material} — engineered for lasting beauty across{" "}
             {product.rooms.slice(0, 2).join(" and ").toLowerCase()} and beyond.
           </p>
 
           {/* Quick facts */}
           <dl className="mt-7 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-charcoal/10 bg-charcoal/10 sm:grid-cols-3">
             {[
-              ["Finish", product.finish],
+              ["Material", product.material],
               ["Size", product.size],
               ["Style", product.style],
+              ["Format", product.format],
             ].map(([k, v]) => (
               <div key={k} className="bg-canvas p-4">
                 <dt className="text-xs uppercase tracking-wide text-stone">{k}</dt>
@@ -165,27 +166,6 @@ export default function ProductDetailClient({ product, variants: variantsProp })
                   </Link>
                 );
               })}
-            </div>
-          </div>
-
-          {/* Variant — texture preview, shown in black & white so the surface pattern reads without colour distraction */}
-          <div className="mt-6">
-            <p className="field-label">Variant — <span className="text-charcoal">{product.finish} texture</span></p>
-            <div className="mt-3 flex flex-wrap gap-2.5">
-              {product.images.map((img, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setActive(i)}
-                  aria-label={`View ${product.finish} texture ${i + 1}`}
-                  title={`${product.finish} texture`}
-                  className={`relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-cream grayscale transition-all cursor-pointer hover:grayscale-0 ${
-                    active === i ? "grayscale-0 ring-2 ring-clay ring-offset-2 ring-offset-canvas" : "opacity-80"
-                  }`}
-                >
-                  <Image src={img} alt={`${product.name} texture ${i + 1}`} fill sizes="48px" className="object-cover" />
-                </button>
-              ))}
             </div>
           </div>
 

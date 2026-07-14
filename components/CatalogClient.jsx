@@ -11,7 +11,7 @@ import {
 } from "@/lib/products";
 import { Close, ChevronDown, Search } from "@/components/Icons";
 
-const emptyFilters = { category: [], finish: [], style: [], color: [], size: [], room: [] };
+const emptyFilters = { category: [], material: [], style: [], color: [], size: [], room: [] };
 
 function FacetGroup({ title, options, selected, onToggle, renderSwatch }) {
   const [open, setOpen] = useState(true);
@@ -79,10 +79,10 @@ export default function CatalogClient({
   const categories = categoriesProp?.length ? categoriesProp : staticCategories;
   const colorsList = colorsListProp?.length ? colorsListProp : staticColorsList;
   const rooms = roomsProp?.length ? roomsProp : staticRooms;
-  // Finish/style/size facets are derived from whatever the current catalogue
+  // Material/style/size facets are derived from whatever the current catalogue
   // actually contains, so a CMS-driven product list stays in sync with no
   // separate taxonomy list to maintain.
-  const finishes = useMemo(() => [...new Set(products.map((p) => p.finish))].sort(), [products]);
+  const materials = useMemo(() => [...new Set(products.map((p) => p.material))].sort(), [products]);
   const styles = useMemo(() => [...new Set(products.map((p) => p.style))].sort(), [products]);
   const sizes = useMemo(() => [...new Set(products.map((p) => p.size))].sort(), [products]);
 
@@ -117,13 +117,13 @@ export default function CatalogClient({
     const q = query.trim().toLowerCase();
     return products.filter((p) => {
       if (filters.category.length && !filters.category.includes(p.category)) return false;
-      if (filters.finish.length && !filters.finish.includes(p.finish)) return false;
+      if (filters.material.length && !filters.material.includes(p.material)) return false;
       if (filters.style.length && !filters.style.includes(p.style)) return false;
       if (filters.color.length && !filters.color.includes(p.color)) return false;
       if (filters.size.length && !filters.size.includes(p.size)) return false;
       if (filters.room.length && !p.rooms.some((r) => filters.room.includes(r))) return false;
       if (q) {
-        const hay = `${p.name} ${p.style} ${p.color} ${p.finish} ${p.category} ${p.rooms.join(" ")}`.toLowerCase();
+        const hay = `${p.name} ${p.style} ${p.color} ${p.material} ${p.category} ${p.rooms.join(" ")}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -133,7 +133,7 @@ export default function CatalogClient({
   const FiltersPanel = (
     <>
       <FacetGroup
-        title="Material"
+        title="Collection"
         options={categories.map((c) => c.short)}
         selected={filters.category.map((slug) => categories.find((c) => c.slug === slug)?.short || slug)}
         onToggle={(label) => {
@@ -141,7 +141,7 @@ export default function CatalogClient({
           if (slug) toggle("category", slug);
         }}
       />
-      <FacetGroup title="Finish" options={finishes} selected={filters.finish} onToggle={(v) => toggle("finish", v)} />
+      <FacetGroup title="Material" options={materials} selected={filters.material} onToggle={(v) => toggle("material", v)} />
       <FacetGroup title="Style" options={styles} selected={filters.style} onToggle={(v) => toggle("style", v)} />
       <FacetGroup title="Colour" options={colorsList} selected={filters.color} onToggle={(v) => toggle("color", v)} renderSwatch />
       <FacetGroup title="Size" options={sizes} selected={filters.size} onToggle={(v) => toggle("size", v)} />
@@ -156,7 +156,7 @@ export default function CatalogClient({
         <p className="eyebrow">The Catalog</p>
         <h1 className="mt-3 font-display text-4xl text-balance sm:text-5xl">Explore every surface</h1>
         <p className="mt-3 text-base text-stone">
-          Filter by material, finish, colour, style, size and room to find the perfect match for your project.
+          Filter by collection, material, colour, style, size and room to find the perfect match for your project.
         </p>
       </div>
 
@@ -184,7 +184,7 @@ export default function CatalogClient({
       <div className="mt-10 grid gap-10 lg:grid-cols-[260px_1fr]">
         {/* Desktop sidebar */}
         <aside className="hidden lg:block">
-          <div className="sticky top-28">
+          <div className="sticky top-28 flex max-h-[calc(100vh-7rem)] flex-col">
             <div className="flex items-center justify-between">
               <h2 className="font-display text-xl text-charcoal">Filters</h2>
               {activeCount > 0 && (
@@ -193,7 +193,7 @@ export default function CatalogClient({
                 </button>
               )}
             </div>
-            <div className="mt-2">{FiltersPanel}</div>
+            <div className="no-scrollbar mt-2 min-h-0 flex-1 overflow-y-auto pr-1 pb-6">{FiltersPanel}</div>
           </div>
         </aside>
 

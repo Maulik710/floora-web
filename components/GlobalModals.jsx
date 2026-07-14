@@ -73,7 +73,7 @@ export default function GlobalModals() {
             <div className="flex items-center gap-3 rounded-xl border border-charcoal/10 bg-cream px-4 py-3">
               <span className="text-xs uppercase tracking-wide text-stone">Product</span>
               <span className="font-medium text-charcoal">{product.name}</span>
-              {product.finish && <span className="ml-auto text-xs text-stone">{product.finish}</span>}
+              {product.material && <span className="ml-auto text-xs text-stone">{product.material}</span>}
             </div>
           )}
 
