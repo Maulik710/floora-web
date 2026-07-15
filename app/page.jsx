@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/ProductCard";
 import ModalButton from "@/components/ModalButton";
+import ClientJourney from "@/components/ClientJourney";
 import { getCategories, getProducts, getTestimonials, getHomePage } from "@/lib/cms";
 import { Shield, Droplet, Palette, Headset, ArrowRight, ArrowUpRight, Star, Quote, Check } from "@/components/Icons";
 
@@ -24,13 +25,16 @@ export default async function HomePage() {
     <>
       {/* ---------- HERO ---------- */}
       <section className="relative min-h-[88vh] w-full overflow-hidden">
-        <Image
-          src={home.heroImage}
-          alt="A serene, sunlit living room finished in warm Floora wood-look flooring"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover animate-slow-zoom"
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          src="/assets/video/floora-brand-video.mp4"
+          poster={home.heroImage}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-charcoal/70 via-charcoal/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-transparent to-transparent" />
@@ -144,6 +148,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ---------- CLIENT JOURNEY ---------- */}
+      <ClientJourney steps={home.clientJourney} />
 
       {/* ---------- FEATURED / NEW ARRIVALS ---------- */}
       <section className="container-luxe py-24">

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import ModalButton from "@/components/ModalButton";
 import { getAboutPage } from "@/lib/cms";
-import { ArrowRight, Shield, Palette, Headset } from "@/components/Icons";
+import { ArrowRight, Check, Shield, Palette, Headset, Layers, Handshake, Award, Leaf } from "@/components/Icons";
 
 export const metadata = {
   title: "About",
@@ -12,7 +12,7 @@ export const metadata = {
     "The Floora story — fifteen years crafting premium SPC, vinyl, laminate and porcelain surfaces for architects, designers and homeowners.",
 };
 
-const iconMap = { Shield, Palette, Headset };
+const iconMap = { Shield, Palette, Headset, Layers, Handshake, Award, Leaf };
 
 // Fixed presentational grid spans for the manufacturing gallery — layout, not
 // content, so it stays here rather than in the CMS.
@@ -60,6 +60,33 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      {/* Our Story */}
+      <section className="container-luxe py-24">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <Reveal className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-soft lg:order-2">
+            <Image
+              src={about.storyImage}
+              alt="Floora manufacturing facility in Morbi, Gujarat"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </Reveal>
+          <Reveal delay={120} className="lg:order-1">
+            <p className="eyebrow">{about.storyEyebrow}</p>
+            <h2 className="mt-3 font-display text-4xl text-balance sm:text-5xl">{about.storyHeading}</h2>
+            <p className="mt-5 max-w-md text-base leading-relaxed text-stone">{about.storyBody}</p>
+            <ul className="mt-6 space-y-3">
+              {about.storyBullets.map((li) => (
+                <li key={li} className="flex items-center gap-3 text-sm text-ink">
+                  <Check className="h-4 w-4 shrink-0 text-clay" /> {li}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </div>
+      </section>
+
       {/* Mission */}
       <section className="bg-cream py-24">
         <div className="container-luxe">
@@ -94,8 +121,34 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      {/* Why Choose Floora — customer-facing value props */}
+      <section className="bg-cream py-24">
+        <div className="container-luxe">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">Why Floora</p>
+            <h2 className="mt-3 font-display text-4xl text-balance sm:text-5xl">
+              A premium surface, backed by a serious operation
+            </h2>
+          </Reveal>
+          <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-charcoal/10 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-4">
+            {about.whyChooseUs.map((item, i) => {
+              const Icon = iconMap[item.icon] || Shield;
+              return (
+                <Reveal key={item.title} delay={i * 80} className="bg-canvas p-8 transition-colors duration-300 hover:bg-white">
+                  <div className="grid h-12 w-12 place-items-center rounded-full bg-clay/10 text-clay">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="mt-5 font-display text-xl text-charcoal">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-stone">{item.text}</p>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* Values */}
-      <section className="container-luxe pb-8">
+      <section className="container-luxe pt-24 pb-8">
         <Reveal className="mx-auto max-w-2xl text-center">
           <p className="eyebrow">What we stand for</p>
           <h2 className="mt-3 font-display text-4xl text-balance sm:text-5xl">Principles underfoot</h2>
@@ -122,7 +175,7 @@ export default async function AboutPage() {
           <p className="eyebrow">The journey</p>
           <h2 className="mt-3 font-display text-4xl text-balance sm:text-5xl">Milestones</h2>
         </Reveal>
-        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-charcoal/10 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-charcoal/10 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-3">
           {about.milestones.map((m, i) => (
             <Reveal key={m.year} delay={i * 80} className="bg-canvas p-7">
               <p className="font-display text-4xl text-clay">{m.year}</p>
@@ -136,7 +189,7 @@ export default async function AboutPage() {
       {/* Stats + CTA */}
       <section className="container-luxe pb-24">
         <Reveal className="rounded-3xl bg-charcoal px-6 py-16 text-center sm:px-12">
-          <div className="grid gap-10 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
             {about.stats.map((s) => (
               <div key={s.label}>
                 <p className="font-display text-5xl text-canvas">{s.value}</p>

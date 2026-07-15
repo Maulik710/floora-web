@@ -7,10 +7,10 @@ import { Close, ChevronDown, Search } from "@/components/Icons";
 
 const emptyFilters = { category: [], material: [], style: [], color: [], size: [], room: [] };
 
-function FacetGroup({ title, options, selected, onToggle, renderSwatch }) {
+function FacetGroup({ title, options, selected, onToggle, renderSwatch, last }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="border-b border-charcoal/10 py-5">
+    <div className={`py-5 ${last ? "" : "border-b border-charcoal/10"}`}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -135,7 +135,7 @@ export default function CatalogClient({
       <FacetGroup title="Style" options={styles} selected={filters.style} onToggle={(v) => toggle("style", v)} />
       <FacetGroup title="Colour" options={colorsList} selected={filters.color} onToggle={(v) => toggle("color", v)} renderSwatch />
       <FacetGroup title="Size" options={sizes} selected={filters.size} onToggle={(v) => toggle("size", v)} />
-      <FacetGroup title="Room / Application" options={rooms} selected={filters.room} onToggle={(v) => toggle("room", v)} />
+      <FacetGroup title="Room / Application" options={rooms} selected={filters.room} onToggle={(v) => toggle("room", v)} last />
     </>
   );
 
@@ -201,7 +201,7 @@ export default function CatalogClient({
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
               {filtered.map((p, i) => (
                 <ProductCard key={p.slug} product={p} priority={i < 3} />
               ))}
